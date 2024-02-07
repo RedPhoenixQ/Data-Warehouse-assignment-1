@@ -22,7 +22,7 @@ FROM
 GROUP BY
 	"year", "month";
 
--- NO: diff per month
+-- MAYBE: 7 first days have abnormaly high counts
 SELECT
 	STDDEV_POP(speed),
 	AVG(speed),
@@ -31,30 +31,133 @@ SELECT
 FROM
 	speeds
 	JOIN timetbl USING (timid)
-	WHERE "year" = '2017'
 GROUP BY
 	"day"
 ORDER BY
-	"day";
+	COUNT DESC;
 
--- NO: diff major diff per day, large span in stddev, 7-ish days have very high counts
 SELECT
 	STDDEV_POP(speed),
 	AVG(speed),
 	COUNT(*),
-	"year",
-	"month",
 	"day"
 FROM
 	speeds
 	JOIN timetbl USING (timid)
-	JOIN car USING (carid)
-WHERE
-	"day" in('2019-03-15', '2019-10-08', '2017-09-16', '2017-05-28', '2019-06-24', '2021-03-12', '2020-07-10')
+	JOIN "location" USING (locid)
 GROUP BY
-	"year",
-	"month",
-	"day",
-	"second"
+	"day", country
 ORDER BY
-	"count" DESC;
+	COUNT DESC;
+-- YES: 7 seconds have over 200 measures the same second, normal is bellow 100
+SELECT
+    STDDEV_POP(speed),
+    AVG(speed),
+    COUNT(*),
+    "year",
+    "month",
+    "day",
+    "second"
+FROM
+    speeds
+    JOIN timetbl USING (timid)
+WHERE
+    "day" in(
+        '2019-03-15',
+        '2019-10-08',
+        '2017-09-16',
+        '2017-05-28',
+        '2019-06-24',
+        '2021-03-12',
+        '2020-07-10'
+    )
+GROUP BY
+    "year",
+    "month",
+    "day",
+    "second"
+ORDER BY
+    "count" DESC;
+    
+-- NO: Major difference between counts in categories
+SELECT
+    STDDEV_POP(speed),
+    AVG(speed),
+    COUNT(*),
+    "second",
+    category
+FROM
+    speeds
+    JOIN timetbl USING (timid)
+    JOIN car USING (carid)
+WHERE
+    "second" in(
+        '2019-03-15 15:47:00',
+        '2020-07-10 03:25:00',
+        '2021-03-12 01:14:00',
+        '2017-05-28 15:44:00',
+        '2017-09-16 18:12:00',
+        '2019-10-08 23:23:00',
+        '2019-06-24 22:30:00'
+    )
+GROUP BY
+    "second",
+    category
+ORDER BY
+    "count" DESC;
+    
+-- MAYBE: Sweden has around half of all the measurements, pattern of country falling in participation by ~50% in order SWE, GER, NED, DEN
+SELECT
+    STDDEV_POP(speed),
+    AVG(speed),
+    COUNT(*),
+    "second",
+    country
+FROM
+    speeds
+    JOIN timetbl USING (timid)
+    JOIN "location" USING (locid)
+WHERE
+    "second" in(
+        '2019-03-15 15:47:00',
+        '2020-07-10 03:25:00',
+        '2021-03-12 01:14:00',
+        '2017-05-28 15:44:00',
+        '2017-09-16 18:12:00',
+        '2019-10-08 23:23:00',
+        '2019-06-24 22:30:00'
+    )
+GROUP BY
+    "second",
+    country
+ORDER BY
+    "count" DESC;
+    
+-- NO: Diff in regions that is not already present in 
+SELECT
+    STDDEV_POP(speed),
+    AVG(speed),
+    COUNT(*),
+    "second",
+    country,
+    region
+FROM
+    speeds
+    JOIN timetbl USING (timid)
+    JOIN "location" USING (locid)
+WHERE
+    "second" in(
+        '2019-03-15 15:47:00',
+        '2020-07-10 03:25:00',
+        '2021-03-12 01:14:00',
+        '2017-05-28 15:44:00',
+        '2017-09-16 18:12:00',
+        '2019-10-08 23:23:00',
+        '2019-06-24 22:30:00'
+    )
+GROUP BY
+    "second",
+    country,
+    region
+ORDER BY
+    "count" DESC;
