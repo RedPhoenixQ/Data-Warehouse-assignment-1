@@ -1,7 +1,9 @@
 -- YES: 'supersport' has higher avg
+-- MAYBE: big variations in counts, but that is expected
 SELECT
 	STDDEV_POP(speed),
 	AVG(speed),
+	COUNT(*),
 	category
 FROM
 	speeds
@@ -21,6 +23,30 @@ FROM
 GROUP BY
 	category, model;
 
+-- YES: 'supersport' has higher avg
+SELECT
+	STDDEV_POP(speed),
+	AVG(speed),
+	model
+FROM
+	speeds
+	JOIN car USING (carid)
+WHERE category = 'supersport'
+GROUP BY
+	model;
+
+-- YES error: 'suv' does not have any suv modelles
+SELECT
+	STDDEV_POP(speed),
+	AVG(speed),
+	model
+FROM
+	speeds
+	JOIN car USING (carid)
+WHERE category = 'suv'
+GROUP BY
+	model;
+	
 -- YES: 'CO-44-35' ('OpelAstra-FX') and 'UH-98-94' ('SkodaOctavia-Si') have high avg
 SELECT
 	STDDEV_POP(speed),
@@ -75,3 +101,48 @@ GROUP BY
 	"month"
 ORDER BY
 	"avg" DESC;
+	
+-- Error: Models that are in multiple categories
+SELECT
+    category,
+    model,
+    COUNT(*)
+from
+    car
+WHERE
+    model in (
+        SELECT
+            c.model
+        FROM
+            car as c
+        GROUP BY
+            c.model
+        HAVING
+            COUNT(DISTINCT c.category) <> 1
+    )
+GROUP BY
+    category,
+    model
+ORDER BY
+    model;
+    
+-- Error: Numberplates that have multiple cars
+SELECT
+	category,
+    model,
+    numberplate
+from
+    car
+WHERE
+    numberplate in (
+        SELECT
+            c.numberplate
+        FROM
+            car as c
+        GROUP BY
+            c.numberplate
+        HAVING
+            COUNT(*) > 1
+    )
+ORDER BY
+    numberplate;

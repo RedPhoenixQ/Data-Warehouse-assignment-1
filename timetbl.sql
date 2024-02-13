@@ -49,14 +49,12 @@ GROUP BY
 	"day", country
 ORDER BY
 	COUNT DESC;
+
 -- YES: 7 seconds have over 200 measures the same second, normal is bellow 100
 SELECT
     STDDEV_POP(speed),
     AVG(speed),
     COUNT(*),
-    "year",
-    "month",
-    "day",
     "second"
 FROM
     speeds
@@ -72,9 +70,6 @@ WHERE
         '2020-07-10'
     )
 GROUP BY
-    "year",
-    "month",
-    "day",
     "second"
 ORDER BY
     "count" DESC;
@@ -106,7 +101,7 @@ GROUP BY
 ORDER BY
     "count" DESC;
     
--- MAYBE: Sweden has around half of all the measurements, pattern of country falling in participation by ~50% in order SWE, GER, NED, DEN
+-- MAYBE: Sweden has around half of all the measurements, pattern of country falling in participation by ~50% in order ['SWE', 'GER', 'NED', 'DEN']
 SELECT
     STDDEV_POP(speed),
     AVG(speed),
@@ -133,7 +128,7 @@ GROUP BY
 ORDER BY
     "count" DESC;
     
--- NO: Diff in regions that is not already present in 
+-- MAYBE: Only four regions are really above avg in count, ['Vastra Gotaland', 'NRW', 'Skane', 'Limburg'], also in decending order of participation
 SELECT
     STDDEV_POP(speed),
     AVG(speed),
