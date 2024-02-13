@@ -93,9 +93,33 @@ FROM
     AND r."max"
     JOIN "location" USING (locid)
 GROUP BY
-    r.id,
     r."range",
     country
 ORDER BY
     country,
-    r.id;
+    r."range";
+
+-- NO: diff between years
+WITH ranges AS (
+    SELECT
+        lpad((ten * 10) :: text, 3, '0') || '-' || lpad((ten * 10 + 9) :: text, 3, '0') AS "range",
+        ten * 10 AS "min",
+        ten * 10 + 9 AS "max",
+    FROM
+        generate_series(0, 22) AS t(ten)
+)
+SELECT
+    r.range,
+    count(speeds.*),
+    "year"
+FROM
+    speeds
+    RIGHT JOIN ranges r ON speed BETWEEN r."min"
+    AND r."max"
+    JOIN timetbl USING (timid)
+GROUP BY
+    r."range",
+    "year"
+ORDER BY
+    "year",
+    r."range";
