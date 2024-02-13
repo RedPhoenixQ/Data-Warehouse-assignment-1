@@ -74,14 +74,12 @@ GROUP BY
 ORDER BY
     category,
     r.id;
-
--- MAYBE: Only Netherlands have high counts in ['30-39', '40-49', '50-59', '60-69'] ranges, but not in '70-79', which could explain why the total count is very low
+-- YES: Only Netherlands have high counts in ['30-39', '40-49', '50-59', '60-69'] ranges, but not in '70-79', which could explain why the total count is very low
 WITH ranges AS (
     SELECT
-        (ten * 10) :: text || '-' ||(ten * 10 + 9) :: text AS "range",
+        lpad((ten * 10) :: text, 3, '0') || '-' || lpad((ten * 10 + 9) :: text, 3, '0') AS "range",
         ten * 10 AS "min",
-        ten * 10 + 9 AS "max",
-        ten as id
+        ten * 10 + 9 AS "max"
     FROM
         generate_series(0, 22) AS t(ten)
 )
