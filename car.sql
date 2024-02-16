@@ -105,21 +105,17 @@ ORDER BY
 -- Error: Models that are in multiple categories
 SELECT
     category,
-    model,
-    COUNT(*)
-from
+    model
+FROM
     car
 WHERE
-    model in (
+    model in(
         SELECT
-            c.model
-        FROM
-            car as c
+            c.model FROM car AS c
         GROUP BY
             c.model
         HAVING
-            COUNT(DISTINCT c.category) <> 1
-    )
+            COUNT(DISTINCT c.category) > 1)
 GROUP BY
     category,
     model
@@ -128,21 +124,18 @@ ORDER BY
     
 -- Error: Numberplates that have multiple cars
 SELECT
-	category,
+    category,
     model,
     numberplate
-from
+FROM
     car
 WHERE
-    numberplate in (
+    numberplate in(
         SELECT
-            c.numberplate
-        FROM
-            car as c
+            c.numberplate FROM car AS c
         GROUP BY
             c.numberplate
         HAVING
-            COUNT(*) > 1
-    )
+            COUNT(*) > 1)
 ORDER BY
     numberplate;
