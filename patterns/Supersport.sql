@@ -1,12 +1,12 @@
 -- Supersport is fast
 SELECT
-	AVG(speed),
-	category
+    AVG(speed),
+    category
 FROM
-	speeds
-	JOIN car USING (carid)
+    speeds
+    JOIN car USING (carid)
 GROUP BY
-	category;
+    category;
 -- Opel stands out
 SELECT
     AVG(speed),

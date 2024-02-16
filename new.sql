@@ -80,33 +80,33 @@ ORDER BY
 	AVG DESC;
 
 SELECT
-	STDDEV_POP(speed),
-	AVG(speed),
-	COUNT(*),
-	country
+    STDDEV_POP(speed),
+    AVG(speed),
+    COUNT(*),
+    country
 FROM
-	speeds
-	JOIN car USING (carid)
-	JOIN "location" USING (locid)
+    speeds
+    JOIN car USING (carid)
+    JOIN "location" USING (locid)
 WHERE
-	numberplate = 'CO-44-35'
+    numberplate = 'CO-44-35'
 GROUP BY
-	country
+    country
 ORDER BY
-	AVG DESC;
+    AVG DESC;
 
 SELECT
-	STDDEV_POP(speed),
-	AVG(speed),
-	COUNT(*),
-	"year"
+    STDDEV_POP(speed),
+    AVG(speed),
+    COUNT(*),
+    "year"
 FROM
-	speeds
-	JOIN car USING (carid)
-	JOIN timetbl USING (timid)
+    speeds
+    JOIN car USING (carid)
+    JOIN timetbl USING (timid)
 WHERE
-	numberplate = 'CO-44-35'
+    numberplate = 'CO-44-35'
 GROUP BY
-	"year"
+    "year"
 ORDER BY
-	AVG DESC;
+    AVG DESC;

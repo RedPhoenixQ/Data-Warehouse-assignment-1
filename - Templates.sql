@@ -1,14 +1,14 @@
 SELECT
-	STDDEV_POP(speed),
-	AVG(speed),
-	"year"
+    STDDEV_POP(speed),
+    AVG(speed),
+    "year"
 FROM
-	speeds
-	JOIN timetbl USING (timid)
-	JOIN LOCATION USING (locid)
-	JOIN car USING (carid)
+    speeds
+    JOIN timetbl USING (timid)
+    JOIN LOCATION USING (locid)
+    JOIN car USING (carid)
 GROUP BY
-	"year";
+    "year";
 
 -- REPORT
 -- 1st query: Demonstrate deviation

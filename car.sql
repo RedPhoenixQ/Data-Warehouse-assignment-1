@@ -1,106 +1,109 @@
 -- YES: 'supersport' has higher avg
 -- MAYBE: big variations in counts, but that is expected
+
 SELECT
-	STDDEV_POP(speed),
-	AVG(speed),
-	COUNT(*),
-	category
+    STDDEV_POP(speed),
+    AVG(speed),
+    COUNT(*),
+    category
 FROM
-	speeds
-	JOIN car USING (carid)
+    speeds
+    JOIN car USING (carid)
 GROUP BY
-	category;
+    category;
 
 -- YES: 'OpelAstra-FX' and 'SkodaOctavia-Si' have high avg and stddev for thier category
 SELECT
-	STDDEV_POP(speed),
-	AVG(speed),
-	category,
-	model
+    STDDEV_POP(speed),
+    AVG(speed),
+    category,
+    model
 FROM
-	speeds
-	JOIN car USING (carid)
+    speeds
+    JOIN car USING (carid)
 GROUP BY
-	category, model;
+    category, model;
 
 -- YES: 'supersport' has higher avg
 SELECT
-	STDDEV_POP(speed),
-	AVG(speed),
-	model
+    STDDEV_POP(speed),
+    AVG(speed),
+    model
 FROM
-	speeds
-	JOIN car USING (carid)
-WHERE category = 'supersport'
+    speeds
+    JOIN car USING (carid)
+WHERE
+    category = 'supersport'
 GROUP BY
-	model;
+    model;
 
 -- YES error: 'suv' does not have any suv modelles
 SELECT
-	STDDEV_POP(speed),
-	AVG(speed),
-	model
+    STDDEV_POP(speed),
+    AVG(speed),
+    model
 FROM
-	speeds
-	JOIN car USING (carid)
-WHERE category = 'suv'
+    speeds
+    JOIN car USING (carid)
+WHERE
+    category = 'suv'
 GROUP BY
-	model;
+    model;
 	
 -- YES: 'CO-44-35' ('OpelAstra-FX') and 'UH-98-94' ('SkodaOctavia-Si') have high avg
 SELECT
-	STDDEV_POP(speed),
-	AVG(speed),
-	category,
-	model,
-	numberplate
+    STDDEV_POP(speed),
+    AVG(speed),
+    category,
+    model,
+    numberplate
 FROM
-	speeds
-	JOIN car USING (carid)
+    speeds
+    JOIN car USING (carid)
 GROUP BY
-	category, model, numberplate
+    category, model, numberplate
 ORDER BY
-	"avg" DESC;
+    "avg" DESC;
 -- NO: diff in country or region for their region
 SELECT
-	STDDEV_POP(speed),
-	AVG(speed),
-	model,
-	numberplate,
-	region
+    STDDEV_POP(speed),
+    AVG(speed),
+    model,
+    numberplate,
+    region
 FROM
-	speeds
-	JOIN car USING (carid)
-	JOIN "location" USING (locid)
+    speeds
+    JOIN car USING (carid)
+    JOIN "location" USING (locid)
 WHERE
-	numberplate = 'CO-44-35'
-	OR numberplate = 'UH-98-94'
+    numberplate = 'CO-44-35'
+    OR numberplate = 'UH-98-94'
 GROUP BY
-	model,
-	numberplate,
-	region
+    model,
+    numberplate,
+    region
 ORDER BY
-	"avg" DESC;
+    "avg" DESC;
 -- NO: diff in year och month
 SELECT
-	STDDEV_POP(speed),
-	AVG(speed),
-	model,
-	numberplate,
-	"month"
+    STDDEV_POP(speed),
+    AVG(speed),
+    model,
+    numberplate,
+    "month"
 FROM
-	speeds
-	JOIN car USING (carid)
-	JOIN timetbl USING (timid)
+    speeds
+    JOIN car USING (carid)
+    JOIN timetbl USING (timid)
 WHERE
-	numberplate = 'CO-44-35'
-	OR numberplate = 'UH-98-94'
+    numberplate = 'CO-44-35'
+    OR numberplate = 'UH-98-94'
 GROUP BY
-	model,
-	numberplate,
-	"month"
+    model,
+    numberplate,
+    "month"
 ORDER BY
-	"avg" DESC;
+    "avg" DESC;
 	
 -- Error: Models that are in multiple categories
 SELECT
